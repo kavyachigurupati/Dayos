@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAYOS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f13;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-top: 2rem;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 0.3rem;
+    }
+
+    .tagline {
+      font-size: 0.9rem;
+      color: #555;
+      font-weight: 300;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .plan-btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .plan-btn:hover { background: #4338ca; }
+    .plan-btn:disabled { background: #2a2a3a; color: #555; cursor: not-allowed; }
+
+    .chat-window {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 100px;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .message.user {
+      align-items: flex-end;
+    }
+
+    .message.assistant {
+      align-items: flex-start;
+    }
+
+    .bubble {
+      padding: 0.9rem 1.2rem;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      max-width: 90%;
+      white-space: pre-wrap;
+    }
+
+    .message.user .bubble {
+      background: #4f46e5;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant .bubble {
+      background: #1a1a24;
+      color: #ccc;
+      border: 1px solid #2a2a3a;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-label {
+      font-size: 0.7rem;
+      color: #444;
+      padding: 0 0.3rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      background: #1a1a24;
+      border: 1px solid #2a2a3a;
+      border-radius: 50px;
+      padding: 0.5rem 0.5rem 0.5rem 1.2rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .chat-input::placeholder { color: #444; }
+
+    .send-btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover { background: #4338ca; }
+    .send-btn:disabled { background: #2a2a3a; cursor: not-allowed; }
+
+    .status {
+      font-size: 0.8rem;
+      color: #555;
+      padding-left: 0.5rem;
+      height: 1rem;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: #4f46e5;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: pulse 1.2s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">DAYOS</div>
+    <div class="tagline">Your personal day intelligence</div>
+  </div>
+
+  <div class="container">
+
+    <button class="plan-btn" id="planBtn" onclick="planMyDay()">
+      ☀️ Plan My Day
+    </button>
+
+    <div class="chat-window" id="chatWindow"></div>
+
+    <div class="status" id="status"></div>
+
+    <div class="input-row">
+      <input
+        class="chat-input"
+        id="chatInput"
+        type="text"
+        placeholder="Ask anything... find me a badminton court, any conferences this week?"
+        onkeydown="if(event.key==='Enter') sendMessage()"
+      />
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+    </div>
+
+  </div>
+
+  <script>
+    const chatWindow = document.getElementById('chatWindow');
+    const chatInput = document.getElementById('chatInput');
+    const status = document.getElementById('status');
+    const sendBtn = document.getElementById('sendBtn');
+    const planBtn = document.getElementById('planBtn');
+
+    // conversation history for context
+    const history = [];
+
+    function addMessage(role, text) {
+      const msg = document.createElement('div');
+      msg.className = `message ${role}`;
+
+      const label = document.createElement('div');
+      label.className = 'message-label';
+      label.textContent = role === 'user' ? 'You' : 'DAYOS';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+
+      msg.appendChild(label);
+      msg.appendChild(bubble);
+      chatWindow.appendChild(msg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+
+      return bubble;
+    }
+
+    function setLoading(loading) {
+      sendBtn.disabled = loading;
+      planBtn.disabled = loading;
+      chatInput.disabled = loading;
+      status.innerHTML = loading
+        ? '<span class="dot"></span><span class="dot"></span><span class="dot"></span>'
+        : '';
+    }
+
+    async function planMyDay() {
+      setLoading(true);
+      addMessage('user', '☀️ Plan my day');
+
+      try {
+        const res = await fetch('/plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          addMessage('assistant', data.briefing);
+          history.push({ role: 'assistant', content: data.briefing });
+        } else {
+          addMessage('assistant', 'Something went wrong — ' + data.error);
+        }
+      } catch (err) {
+        addMessage('assistant', 'Could not reach the server. Is it running?');
+      }
+
+      setLoading(false);
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      chatInput.value = '';
+      addMessage('user', text);
+      history.push({ role: 'user', content: text });
+      setLoading(true);
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          addMessage('assistant', data.reply);
+          history.push({ role: 'assistant', content: data.reply });
+        } else {
+          addMessage('assistant', 'Something went wrong — ' + data.error);
+        }
+      } catch (err) {
+        addMessage('assistant', 'Could not reach the server.');
+      }
+
+      setLoading(false);
+    }
+  </script>
+
+</body>
+</html>
