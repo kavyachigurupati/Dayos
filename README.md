@@ -66,13 +66,17 @@ this is, the more personal the responses will be.
 
 ## Folder structure
 
+```
 dayos/
 ├── server.js          # backend — routes, API calls, AI logic
 ├── index.html         # frontend — chat UI
 ├── package.json       # dependencies
 ├── .env               # your API keys (never commit this)
 ├── .env.example       # template for API keys (safe to commit)
+├── .gitignore         # files to exclude from git
+├── PRD.md             # product requirements document
 └── README.md          # this file
+```
 
 ## Coming soon
 
