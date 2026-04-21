@@ -1,6 +1,9 @@
 # API keys and environment variables — never commit these
 .env
 
+# Local memory — contains personal data, never commit
+profile.json
+
 # Dependencies — reinstalled via npm install
 node_modules/
 
