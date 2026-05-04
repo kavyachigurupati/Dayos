@@ -2,22 +2,30 @@
 
 ## Now — Phase 1 (Core Loop)
 
-- [x] sanitizer.js — strip sensitive data before it leaves device
+**Done**
 - [x] profile.json — local memory with interests, PhD schedule, plans
-- [x] Wire you.com search into chat route — not just morning briefing
-- [ ] Connect Google Calendar via MCP — replace hardcoded schedule
-- [ ] Private dedicated model deployment on Baseten or Fireworks
+- [x] you.com search — wired into chat and morning briefing
+- [x] Morning briefing + chat UI — working locally
 
-## Next — Phase 2 (Voice)
+**Building now**
+- [ ] Step 1 — Replace sanitizer regex → clean field whitelist (title, start, end, duration only)
+- [ ] Step 2 — Google Calendar via OAuth + API (replace hardcoded schedule)
+- [ ] Step 3 — Settings panel in UI (calendar connect, email, briefing time)
+- [ ] Step 4 — Auto 8am briefing via node-cron + email delivery via nodemailer
+- [ ] Step 5 — Deploy to Railway (always-on, accessible from phone browser)
 
-- [ ] ElevenLabs — read every response out loud automatically
-- [ ] VoiceRun — two-way voice conversation
-- [ ] Auto morning briefing at set time — no button press needed
+## Next — Phase 2 (Mobile)
 
-## Later — Phase 3 (Mobile)
-
-- [ ] Progressive Web App — push notifications, home screen icon
+- [ ] Progressive Web App — home screen icon, works offline
+- [ ] Web Push notifications — real Apple notifications via Safari, no App Store needed
+- [ ] Mobile-optimised UI — responsive layout, touch-friendly
 - [ ] Cactus on-device inference — model runs on phone, nothing leaves
+
+## Later — Phase 3 (Voice)
+
+- [ ] Voice input — speak to DAYOS instead of typing
+- [ ] Voice output — briefings and responses read out loud
+- [ ] Two-way voice conversation
 
 ## Future — Phase 4+
 

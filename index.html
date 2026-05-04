@@ -4,122 +4,310 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DAYOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --paper:        #f4ede4;
+      --card:         #fdfaf5;
+      --ink:          #2d2416;
+      --ink-light:    #7c6f5a;
+      --ink-faint:    #d4c5a9;
+      --yellow-note:  #fef9c3;
+      --blue-note:    #eff6ff;
+      --green-note:   #f0fdf4;
+      --red-margin:   #f87171;
+      --accent:       #4f46e5;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0f0f13;
-      color: #ffffff;
+      background: var(--paper);
+      background-image:
+        radial-gradient(ellipse at 15% 60%, rgba(255,220,180,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 20%, rgba(200,185,160,0.12) 0%, transparent 50%);
+      color: var(--ink);
       min-height: 100vh;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── page layout ── */
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+      gap: 1.25rem;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
-      padding-top: 2rem;
+    /* ── base card ── */
+    .card {
+      background: var(--card);
+      border-radius: 3px 6px 5px 2px / 4px 2px 6px 3px;
+      box-shadow:
+        2px 3px 0 rgba(45,36,22,0.06),
+        3px 6px 16px rgba(45,36,22,0.08);
+      position: relative;
     }
+
+    /* tape decoration on cards */
+    .card.taped::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-1deg);
+      width: 52px;
+      height: 18px;
+      background: rgba(255,240,180,0.7);
+      border: 1px solid rgba(200,180,120,0.4);
+      border-radius: 2px;
+    }
+
+    /* ── header ── */
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0.5rem 0 0.25rem;
+    }
+
+    .logo-area { display: flex; flex-direction: column; gap: 0.15rem; }
 
     .logo {
-      font-size: 2.5rem;
+      font-family: 'Caveat', cursive;
+      font-size: 3rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #ffffff;
-      margin-bottom: 0.3rem;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -0.01em;
     }
 
     .tagline {
-      font-size: 0.9rem;
-      color: #555;
-      font-weight: 300;
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--ink-light);
     }
 
-    .container {
-      width: 100%;
-      max-width: 680px;
+    .header-right {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.4rem;
+    }
+
+    .cal-status {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: 'Caveat', cursive;
+      font-size: 0.95rem;
+      color: var(--ink-light);
+    }
+
+    .cal-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #d1d5db;
+      transition: background 0.3s;
+    }
+    .cal-dot.connected { background: #16a34a; }
+
+    .gear-btn {
+      background: none;
+      border: 2px solid var(--ink-faint);
+      color: var(--ink-light);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      border-radius: 2px 4px 3px 2px / 3px 2px 4px 3px;
+    }
+    .gear-btn:hover { background: var(--ink-faint); color: var(--ink); }
+
+    /* ── divider ── */
+    .divider {
+      border: none;
+      border-top: 1.5px dashed var(--ink-faint);
+      margin: 0;
+    }
+
+    /* ── action row ── */
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
 
-    .plan-btn {
-      background: #4f46e5;
-      color: white;
-      border: none;
-      padding: 0.9rem 2rem;
-      font-size: 0.95rem;
-      font-weight: 500;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 100%;
+    @media (max-width: 520px) {
+      .action-row { grid-template-columns: 1fr; }
     }
 
-    .plan-btn:hover { background: #4338ca; }
-    .plan-btn:disabled { background: #2a2a3a; color: #555; cursor: not-allowed; }
+    .action-card {
+      padding: 1.4rem 1.5rem;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      user-select: none;
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px) rotate(0.3deg);
+      box-shadow: 3px 6px 0 rgba(45,36,22,0.08), 4px 10px 20px rgba(45,36,22,0.1);
+    }
+
+    .action-card:active { transform: translateY(0) rotate(0deg); }
+
+    .action-card.plan { background: var(--blue-note); }
+    .action-card.schedule { background: var(--green-note); }
+
+    .action-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .action-title {
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+
+    .action-desc {
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      line-height: 1.4;
+    }
+
+    /* ── chat card — lined notebook ── */
+    .chat-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 0.9rem 1.5rem 0.75rem;
+      border-bottom: 1px solid var(--ink-faint);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chat-header-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--ink-light);
+    }
 
     .chat-window {
+      min-height: 120px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding: 1.25rem 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      min-height: 100px;
+
+      /* lined paper */
+      background-image:
+        linear-gradient(to right, transparent 48px, rgba(248,113,113,0.2) 48px, rgba(248,113,113,0.2) 50px, transparent 50px),
+        repeating-linear-gradient(
+          transparent,
+          transparent 27px,
+          rgba(212,197,169,0.45) 27px,
+          rgba(212,197,169,0.45) 28px
+        );
+      background-color: var(--card);
+      line-height: 28px;
     }
 
+    .chat-window::-webkit-scrollbar { width: 4px; }
+    .chat-window::-webkit-scrollbar-track { background: transparent; }
+    .chat-window::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 4px; }
+
+    /* ── messages ── */
     .message {
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
-      animation: fadeIn 0.3s ease;
+      gap: 0.25rem;
+      animation: popIn 0.25s ease;
     }
 
-    .message.user {
-      align-items: flex-end;
-    }
+    .message.user  { align-items: flex-end;  padding-left: 52px; }
+    .message.assistant { align-items: flex-start; padding-right: 52px; }
 
-    .message.assistant {
-      align-items: flex-start;
+    .message-label {
+      font-family: 'Caveat', cursive;
+      font-size: 0.85rem;
+      color: var(--ink-light);
+      padding: 0 0.4rem;
     }
 
     .bubble {
-      padding: 0.9rem 1.2rem;
-      border-radius: 16px;
-      font-size: 0.95rem;
-      line-height: 1.7;
-      max-width: 90%;
+      padding: 0.85rem 1.1rem;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 100%;
       white-space: pre-wrap;
+      position: relative;
     }
 
     .message.user .bubble {
-      background: #4f46e5;
-      color: white;
-      border-bottom-right-radius: 4px;
+      background: var(--yellow-note);
+      border: 1.5px solid #d97706;
+      border-radius: 2px 6px 5px 3px / 4px 2px 6px 3px;
+      box-shadow: 2px 3px 0 rgba(217,119,6,0.15);
+      transform: rotate(0.4deg);
     }
 
     .message.assistant .bubble {
-      background: #1a1a24;
-      color: #ccc;
-      border: 1px solid #2a2a3a;
-      border-bottom-left-radius: 4px;
+      background: #ffffff;
+      border: 1.5px solid var(--ink-faint);
+      border-radius: 3px 5px 6px 2px / 4px 3px 2px 5px;
+      box-shadow: 2px 3px 0 rgba(45,36,22,0.07);
+      transform: rotate(-0.3deg);
     }
 
-    .message-label {
-      font-size: 0.7rem;
-      color: #444;
-      padding: 0 0.3rem;
+    /* ── status / typing ── */
+    .status-bar {
+      padding: 0.4rem 1.5rem;
+      min-height: 1.6rem;
+      display: flex;
+      align-items: center;
     }
 
+    .typing-label {
+      font-family: 'Caveat', cursive;
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.2s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ── input row ── */
     .input-row {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.6rem;
       align-items: center;
-      background: #1a1a24;
-      border: 1px solid #2a2a3a;
-      border-radius: 50px;
-      padding: 0.5rem 0.5rem 0.5rem 1.2rem;
+      padding: 0.75rem 1rem 0.75rem 1.5rem;
+      border-top: 1.5px dashed var(--ink-faint);
+      background: rgba(255,255,255,0.4);
     }
 
     .chat-input {
@@ -127,155 +315,456 @@
       background: transparent;
       border: none;
       outline: none;
-      color: #fff;
+      color: var(--ink);
       font-size: 0.95rem;
       font-family: inherit;
+      line-height: 1.5;
     }
 
-    .chat-input::placeholder { color: #444; }
+    .chat-input::placeholder { color: var(--ink-faint); }
 
     .send-btn {
-      background: #4f46e5;
-      color: white;
+      background: var(--ink);
+      color: var(--paper);
       border: none;
-      width: 36px;
-      height: 36px;
+      width: 34px; height: 34px;
+      border-radius: 2px 5px 4px 2px / 3px 2px 5px 3px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .send-btn:hover { background: #4f46e5; transform: rotate(-1deg); }
+    .send-btn:disabled { background: var(--ink-faint); cursor: not-allowed; transform: none; }
+
+    /* ── settings overlay ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(45,36,22,0.25);
+      z-index: 99;
+      backdrop-filter: blur(1px);
+    }
+    .overlay.open { display: block; }
+
+    /* ── settings panel ── */
+    .settings-panel {
+      position: fixed;
+      top: 0; right: -400px;
+      width: 340px;
+      height: 100vh;
+      background: #fefce8;
+      border-left: 2px dashed var(--ink-faint);
+      box-shadow: -4px 0 24px rgba(45,36,22,0.12);
+      z-index: 100;
+      padding: 2rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transition: right 0.3s cubic-bezier(0.16,1,0.3,1);
+      overflow-y: auto;
+    }
+
+    .settings-panel.open { right: 0; }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .settings-title {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .close-btn {
+      background: none;
+      border: 1.5px solid var(--ink-faint);
+      color: var(--ink-light);
+      width: 30px; height: 30px;
       border-radius: 50%;
       cursor: pointer;
       font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { background: var(--ink-faint); }
+
+    .settings-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .settings-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--ink-light);
+    }
+
+    .settings-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.2s;
+      justify-content: space-between;
+      gap: 1rem;
+      background: rgba(255,255,255,0.6);
+      border: 1.5px solid var(--ink-faint);
+      border-radius: 3px 5px 4px 2px / 3px 2px 5px 3px;
+      padding: 0.7rem 1rem;
     }
 
-    .send-btn:hover { background: #4338ca; }
-    .send-btn:disabled { background: #2a2a3a; cursor: not-allowed; }
-
-    .status {
-      font-size: 0.8rem;
-      color: #555;
-      padding-left: 0.5rem;
-      height: 1rem;
+    .settings-row-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .dot {
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      background: #4f46e5;
-      border-radius: 50%;
-      margin: 0 2px;
-      animation: pulse 1.2s infinite;
+    .connect-btn {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      font-weight: 600;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 0.35rem 0.9rem;
+      border-radius: 2px 4px 3px 2px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
     }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
+    .connect-btn:hover { background: #4f46e5; }
+    .connect-btn.connected {
+      background: #16a34a;
+      cursor: default;
+    }
+
+    .settings-input {
+      width: 100%;
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid var(--ink-faint);
+      border-radius: 2px 4px 3px 2px;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.9rem;
+      color: var(--ink);
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .settings-input:focus { border-color: #4f46e5; }
+
+    .save-btn {
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 0.7rem;
+      border-radius: 2px 5px 4px 2px / 3px 2px 5px 3px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      width: 100%;
+    }
+    .save-btn:hover { background: #4f46e5; transform: rotate(-0.5deg); }
+
+    .save-feedback {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: #16a34a;
+      text-align: center;
+      min-height: 1.2rem;
+    }
+
+    /* ── token meta line ── */
+    .message-meta {
+      font-family: 'Caveat', cursive;
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      padding: 0 0.4rem;
+    }
+
+    /* ── links inside bubbles ── */
+    .bubble a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: dashed;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+    .bubble a:hover { text-decoration-style: solid; }
+
+    /* ── animations ── */
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
     @keyframes pulse {
       0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+      50%       { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="logo">DAYOS</div>
-    <div class="tagline">Your personal day intelligence</div>
+  <!-- Settings overlay -->
+  <div class="overlay" id="overlay" onclick="closeSettings()"></div>
+
+  <!-- Settings panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <div class="settings-title">settings</div>
+      <button class="close-btn" onclick="closeSettings()">✕</button>
+    </div>
+
+    <hr class="divider">
+
+    <div class="settings-section">
+      <div class="settings-label">connections</div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <span id="calDotSettings" class="cal-dot"></span>
+          Google Calendar
+        </div>
+        <button class="connect-btn" id="connectBtn" onclick="connectCalendar()">Connect</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">morning briefing</div>
+      <input class="settings-input" id="briefingEmail" type="email" placeholder="your@email.com" />
+      <input class="settings-input" id="briefingTime" type="time" value="08:00" />
+    </div>
+
+    <button class="save-btn" onclick="saveSettings()">save</button>
+    <div class="save-feedback" id="saveFeedback"></div>
   </div>
 
-  <div class="container">
+  <!-- Page -->
+  <div class="page">
 
-    <button class="plan-btn" id="planBtn" onclick="planMyDay()">
-      ☀️ Plan My Day
-    </button>
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-area">
+        <div class="logo">DAYOS</div>
+        <div class="tagline">your personal day intelligence</div>
+      </div>
+      <div class="header-right">
+        <div class="cal-status">
+          <span class="cal-dot" id="calDot"></span>
+          <span id="calLabel">calendar</span>
+        </div>
+        <button class="gear-btn" onclick="openSettings()" title="Settings">⚙</button>
+      </div>
+    </div>
 
-    <div class="chat-window" id="chatWindow"></div>
+    <hr class="divider">
 
-    <div class="status" id="status"></div>
+    <!-- Action cards -->
+    <div class="action-row">
+      <div class="card action-card plan taped" onclick="planMyDay()" id="planCard">
+        <span class="action-icon">☀️</span>
+        <div class="action-title">Plan My Day</div>
+        <div class="action-desc">morning briefing — weather, schedule, hackathons, events</div>
+      </div>
+      <div class="card action-card schedule taped" onclick="startScheduling()">
+        <span class="action-icon">📅</span>
+        <div class="action-title">Schedule</div>
+        <div class="action-desc">tell DAYOS your week — it finds free slots and adds to calendar</div>
+      </div>
+    </div>
 
-    <div class="input-row">
-      <input
-        class="chat-input"
-        id="chatInput"
-        type="text"
-        placeholder="Ask anything... find me a badminton court, any conferences this week?"
-        onkeydown="if(event.key==='Enter') sendMessage()"
-      />
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+    <!-- Chat -->
+    <div class="card chat-card">
+      <div class="chat-header">
+        <div class="chat-header-label">notes &amp; chat</div>
+      </div>
+
+      <div class="chat-window" id="chatWindow"></div>
+
+      <div class="status-bar" id="statusBar"></div>
+
+      <div class="input-row">
+        <input
+          class="chat-input"
+          id="chatInput"
+          type="text"
+          placeholder="ask anything — badminton courts, conference deadlines, plan my week..."
+          onkeydown="if(event.key==='Enter') sendMessage()"
+        />
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+      </div>
     </div>
 
   </div>
 
   <script>
-    const chatWindow = document.getElementById('chatWindow');
-    const chatInput = document.getElementById('chatInput');
-    const status = document.getElementById('status');
-    const sendBtn = document.getElementById('sendBtn');
-    const planBtn = document.getElementById('planBtn');
+    const chatWindow  = document.getElementById('chatWindow');
+    const chatInput   = document.getElementById('chatInput');
+    const statusBar   = document.getElementById('statusBar');
+    const sendBtn     = document.getElementById('sendBtn');
+    const planCard    = document.getElementById('planCard');
+    const calDot      = document.getElementById('calDot');
+    const calLabel    = document.getElementById('calLabel');
+    const calDotSettings = document.getElementById('calDotSettings');
+    const connectBtn  = document.getElementById('connectBtn');
 
-    // conversation history for context
     const history = [];
 
-    function addMessage(role, text) {
-      const msg = document.createElement('div');
+    // ── on load ──────────────────────────────────────────────────────────────
+
+    (async function init() {
+      try {
+        const [statusRes, profileRes] = await Promise.all([
+          fetch('/status').then(r => r.json()),
+          fetch('/profile').then(r => r.json()),
+        ]);
+        setCalendarStatus(statusRes.calendarConnected);
+        if (profileRes.briefing_email) {
+          document.getElementById('briefingEmail').value = profileRes.briefing_email;
+        }
+        if (profileRes.briefing_time) {
+          document.getElementById('briefingTime').value = profileRes.briefing_time;
+        }
+      } catch (_) {}
+    })();
+
+    function setCalendarStatus(connected) {
+      calDot.className    = 'cal-dot' + (connected ? ' connected' : '');
+      calDotSettings.className = calDot.className;
+      calLabel.textContent = connected ? 'calendar on' : 'calendar';
+      connectBtn.textContent = connected ? 'Connected ✓' : 'Connect';
+      connectBtn.className   = 'connect-btn' + (connected ? ' connected' : '');
+    }
+
+    // ── settings ─────────────────────────────────────────────────────────────
+
+    function openSettings() {
+      document.getElementById('settingsPanel').classList.add('open');
+      document.getElementById('overlay').classList.add('open');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsPanel').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    }
+
+    function connectCalendar() {
+      const win = window.open('/auth/google', '_blank', 'width=500,height=600');
+      const poll = setInterval(async () => {
+        if (win.closed) {
+          clearInterval(poll);
+          try {
+            const s = await fetch('/status').then(r => r.json());
+            setCalendarStatus(s.calendarConnected);
+          } catch (_) {}
+        }
+      }, 800);
+    }
+
+    async function saveSettings() {
+      const email = document.getElementById('briefingEmail').value.trim();
+      const time  = document.getElementById('briefingTime').value;
+      const feedback = document.getElementById('saveFeedback');
+      try {
+        await fetch('/profile', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ briefing_email: email, briefing_time: time }),
+        });
+        feedback.textContent = 'saved ✓';
+        setTimeout(() => { feedback.textContent = ''; }, 2500);
+      } catch (_) {
+        feedback.textContent = 'could not save';
+        feedback.style.color = '#dc2626';
+      }
+    }
+
+    // ── messages ─────────────────────────────────────────────────────────────
+
+    function renderText(text) {
+      const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      // stop URL before trailing punctuation so href stays valid
+      return escaped.replace(
+        /(https?:\/\/[^\s<>"'`,;!?)[\]]+)/g,
+        '<a href="$1" target="_blank" rel="noopener">$1</a>'
+      );
+    }
+
+    function addMessage(role, text, usage) {
+      const msg    = document.createElement('div');
       msg.className = `message ${role}`;
 
-      const label = document.createElement('div');
+      const label  = document.createElement('div');
       label.className = 'message-label';
-      label.textContent = role === 'user' ? 'You' : 'DAYOS';
+      label.textContent = role === 'user' ? 'you' : 'dayos';
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
-      bubble.textContent = text;
+      bubble.innerHTML = renderText(text);
 
       msg.appendChild(label);
       msg.appendChild(bubble);
+
+      if (role === 'assistant' && usage) {
+        const meta = document.createElement('div');
+        meta.className = 'message-meta';
+        const claudeTotal  = (usage.claude?.input  || 0) + (usage.claude?.output  || 0);
+        const basetenTotal = (usage.baseten?.input || 0) + (usage.baseten?.output || 0);
+        meta.textContent = `claude ${claudeTotal} tok · deepseek ${basetenTotal} tok`;
+        msg.appendChild(meta);
+      }
+
       chatWindow.appendChild(msg);
       chatWindow.scrollTop = chatWindow.scrollHeight;
-
       return bubble;
     }
 
     function setLoading(loading) {
-      sendBtn.disabled = loading;
-      planBtn.disabled = loading;
-      chatInput.disabled = loading;
-      status.innerHTML = loading
-        ? '<span class="dot"></span><span class="dot"></span><span class="dot"></span>'
+      sendBtn.disabled    = loading;
+      chatInput.disabled  = loading;
+      planCard.style.pointerEvents = loading ? 'none' : '';
+      statusBar.innerHTML = loading
+        ? '<div class="typing-label">thinking <span class="dot"></span><span class="dot"></span><span class="dot"></span></div>'
         : '';
     }
 
+    // ── plan my day ──────────────────────────────────────────────────────────
+
     async function planMyDay() {
       setLoading(true);
-      addMessage('user', '☀️ Plan my day');
-
+      addMessage('user', '☀️ plan my day');
       try {
-        const res = await fetch('/plan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({})
-        });
+        const res  = await fetch('/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
         const data = await res.json();
-
-        if (data.success) {
-          addMessage('assistant', data.briefing);
-          history.push({ role: 'assistant', content: data.briefing });
-        } else {
-          addMessage('assistant', 'Something went wrong — ' + data.error);
-        }
-      } catch (err) {
-        addMessage('assistant', 'Could not reach the server. Is it running?');
+        addMessage('assistant', data.success ? data.briefing : 'something went wrong — ' + data.error, data.usage);
+        if (data.success) history.push({ role: 'assistant', content: data.briefing });
+      } catch (_) {
+        addMessage('assistant', 'could not reach the server — is it running?');
       }
-
       setLoading(false);
     }
+
+    // ── schedule shortcut ────────────────────────────────────────────────────
+
+    function startScheduling() {
+      chatInput.value = 'Help me plan my week — ';
+      chatInput.focus();
+    }
+
+    // ── chat ─────────────────────────────────────────────────────────────────
 
     async function sendMessage() {
       const text = chatInput.value.trim();
@@ -287,21 +776,17 @@
       setLoading(true);
 
       try {
-        const res = await fetch('/chat', {
+        const res  = await fetch('/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, history })
+          body: JSON.stringify({ message: text, history }),
         });
         const data = await res.json();
-
-        if (data.success) {
-          addMessage('assistant', data.reply);
-          history.push({ role: 'assistant', content: data.reply });
-        } else {
-          addMessage('assistant', 'Something went wrong — ' + data.error);
-        }
-      } catch (err) {
-        addMessage('assistant', 'Could not reach the server.');
+        const reply = data.success ? data.reply : 'something went wrong — ' + data.error;
+        addMessage('assistant', reply, data.usage);
+        if (data.success) history.push({ role: 'assistant', content: reply });
+      } catch (_) {
+        addMessage('assistant', 'could not reach the server.');
       }
 
       setLoading(false);

@@ -1,6 +1,10 @@
 # API keys and environment variables — never commit these
 .env
 
+# Google OAuth credentials and tokens — never commit these
+credentials.json
+tokens.json
+
 # Local memory — contains personal data, never commit
 profile.json
 
