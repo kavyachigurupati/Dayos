@@ -64,9 +64,11 @@ day you're planning, including the weekday — it determines the blocked window.
 Show two things, clearly separated:
 
 **(a) Candidate to-dos** drawn from the backlog, weighted toward anything with a
-near deadline. Surface recurring items that are due to resurface (e.g. gym if
-the weekly goal isn't met yet). List each with its duration estimate and any
-deadline.
+near deadline. List each with its duration estimate and any deadline. Also pull:
+- one **next action** from each active project in `Planner/projects/` (the line
+  under "Next action"), and
+- the **daily growth** items from `tasks.md` (e.g. LinkedIn, communication) so a
+  little progress happens every day.
 
 **(b) Open slots** for the day: take the full day, subtract the blocked window
 (skip it on weekends per preferences), subtract every fixed commitment, and
@@ -99,6 +101,24 @@ When the user is done placing:
 - Update `Planner/tasks.md`: mark scheduled items, decrement recurring counters,
   carry forward anything pushed.
 - Show the final plan so the user can glance at it in the morning.
+
+## The idea-review ritual
+
+Triggered when the user says "idea review", "let's go through my ideas", or at
+the scheduled times (Mon & Tue 10 PM, Wed–Sun 5:30 PM). Purpose: turn the day's
+raw captures in `Planner/inbox.md` into something actionable, then clear it.
+
+1. Read `Planner/inbox.md`.
+2. Go through each item **conversationally, one at a time** — ask clarifying
+   questions, help think it through (e.g. "when's the right time to start this?").
+3. For each, decide together where it belongs:
+   - a concrete next step → add to `tasks.md`
+   - a new project → create a note in `projects/` from `_template.md`
+   - relates to a goal → append to the relevant `goals/` note
+   - not worth pursuing → drop it (or move to "Maybe / someday")
+4. After sorting, **clear the handled items** from `inbox.md` so it's fresh for
+   tomorrow.
+5. Keep it light and fast — this is a thinking partner session, not a meeting.
 
 ## Principles
 
@@ -166,8 +186,8 @@ When the user is done placing:
 - 09:00–17:00 Office
 
 ## Scheduled
-- 06:30–08:00 <item>
-- 18:00–19:30 <item>
+- [ ] 06:30–08:00 <item>
+- [ ] 18:00–19:30 <item>
 
 ## Pushed / dropped
 - <item> → <reason>
