@@ -8,6 +8,9 @@ tokens.json
 # Local memory — contains personal data, never commit
 profile.json
 
+# Planner vault — personal schedule/tasks, Obsidian points here, never commit
+Planner/
+
 # Dependencies — reinstalled via npm install
 node_modules/
 
