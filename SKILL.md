@@ -120,6 +120,22 @@ raw captures in `Planner/inbox.md` into something actionable, then clear it.
    tomorrow.
 5. Keep it light and fast — this is a thinking partner session, not a meeting.
 
+## End-of-day review (interactive — "Idea review with Claude" slot)
+
+A short retrospective that teaches the planner. Run it conversationally:
+
+1. Read today's `plans/YYYY-MM-DD.md`.
+2. Go through each scheduled item and ask: **done or not?** For anything not done,
+   ask **why** (offer quick reasons: ran out of time / too tired / wrong time of
+   day / got interrupted / didn't feel like it).
+3. Write the result to `reviews/YYYY-MM-DD.md` (what got done, misses + reasons).
+4. Update `feedback.md`: log the raw observation, and when a pattern repeats
+   (e.g. early-morning slots skipped 3+ times), promote it to an **Active rule**
+   in plain English. Keep rules transparent so the user can edit/override them.
+
+The nightly job reads `feedback.md` and applies these rules when placing items,
+so tomorrow's schedule reflects what actually works for the user.
+
 ## Principles
 
 - The user decides; you compute and prompt.

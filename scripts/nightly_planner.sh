@@ -24,7 +24,7 @@ PROMPT="You are the Nightly Planner running UNATTENDED at 9 PM. Do the PREP phas
 Tomorrow is ${WEEKDAY} ${TOMORROW}.
 
 Steps:
-1. Read preferences.md (blocked hours, recurring fixed commitments, daily growth schedule, default availability) and tasks.md.
+1. Read preferences.md (blocked hours, recurring fixed commitments, daily growth schedule, default availability), tasks.md, and feedback.md — APPLY the learned rules in feedback.md when placing items (e.g. avoid times the user repeatedly skips).
 2. SYNC CANVAS: call get_my_upcoming_assignments (14 days) and get_my_todo_items. For each assignment not already in tasks.md, add it under 'Assignments (synced from Canvas)' as '- [ ] <name> — ~90m — due <YYYY-MM-DD HH:MM> ET — _<course>_'. Convert Canvas UTC due times to Eastern. Dedupe using the '<!-- synced from Canvas -->' marker.
 3. SWEEP EMAIL BACKLOG: call Gmail search_threads with query 'label:Planner/Backlog'. Each thread is something the user wants to read/do. For each, treat the subject (and any link) as a candidate item needing ~45m (use a duration in parentheses in the subject if present, e.g. '(30m)'). After scheduling it in step 6, MOVE the thread out of the backlog: label_thread with Label_5 (Planner/Scheduled) and unlabel_thread with Label_4 (Planner/Backlog), so it is never scheduled twice. If the backlog is empty, skip.
 4. COMPUTE OPEN SLOTS for ${TOMORROW}: start from default availability, subtract office hours and every recurring fixed commitment (class, reading group, workouts) and daily-growth block (communication, LinkedIn on Thu/Fri, idea review) that falls on ${WEEKDAY}. List remaining free slots with durations.
